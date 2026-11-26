@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KALA — Portal Admin &amp; Benchmark Pencarian</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#FFFFFF',
+            'on-surface': '#111111',
+            'surface-studio': '#F5F5F5',
+            'on-surface-muted': '#757575',
+            'primary': '#111111',
+            'on-primary': '#FFFFFF',
+            'brand-red': '#E0001A',
+            'outline': '#E5E5E5',
+            'outline-strong': '#111111',
+          },
+          borderRadius: { 'none': '0px', 'sm': '2px', 'DEFAULT': '2px' },
+          fontFamily: {
+            'sans': ['"Inter"', 'sans-serif'],
+            'mono': ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-surface text-on-surface font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-surface border-b border-outline">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <a href="/" class="w-10 h-10 bg-brand-red text-white flex items-center justify-center font-bold text-xs tracking-tight">KALA</a>
+        <div>
+          <h1 class="text-sm font-semibold text-on-surface">Portal Manajemen Toko &amp; Telemetri Pencarian</h1>
+          <p class="text-xs text-on-surface-muted">Perangkat: {{ hardware.gpu_name }} • Model: {{ hardware.active_profile.label }}</p>
+        </div>
+      </div>
+      <a href="/" class="px-4 py-2 border border-outline-strong text-xs font-medium hover:bg-surface-studio">
+        Kembali ke Toko KALA
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-screen-2xl mx-auto w-full px-6 lg:px-12 py-10 space-y-12">
+    <!-- Ringkasan Toko -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="border border-outline p-5 bg-surface-studio">
+        <div class="text-xs text-on-surface-muted">Total Katalog Produk</div>
+        <div id="adm-total-prod" class="text-2xl font-bold mt-1 tabular-nums">{{ stats.total_products }}</div>
+      </div>
+      <div class="border border-outline p-5 bg-surface-studio">
+        <div class="text-xs text-on-surface-muted">Pesanan Masuk</div>
+        <div id="adm-total-ord" class="text-2xl font-bold mt-1 tabular-nums">{{ stats.total_orders }}</div>
+      </div>
+      <div class="border border-outline p-5 bg-surface-studio">
+        <div class="text-xs text-on-surface-muted">Total Nilai Transaksi</div>
+        <div id="adm-revenue" class="text-2xl font-bold mt-1 tabular-nums">Rp {{ "{:,}".format(stats.total_revenue).replace(",", ".") }}</div>
+      </div>
+      <div class="border border-outline p-5 bg-surface-studio">
+        <div class="text-xs text-on-surface-muted">Stok Menipis (&le; 5)</div>
+        <div id="adm-low-stock" class="text-2xl font-bold mt-1 tabular-nums">{{ stats.low_stock_count }}</div>
+      </div>
+    </section>
+
+    <!-- CRUD Produk & Daftar Pesanan -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-4 border border-outline p-6">
+        <h2 class="text-base font-semibold mb-1">Tambah Produk &amp; Indeks Foto Baru</h2>
+        <p class="text-xs text-on-surface-muted mb-5">Foto yang diunggah langsung diindeks otomatis oleh GPU ke ruang vektor multimodal.</p>
+        <form id="adm-add-form" onsubmit="adminSubmitProduct(event)" class="space-y-3.5 text-sm">
+          <div>
+            <label class="block text-xs font-medium mb-1">Nama Produk</label>
+            <input type="text" name="name" required placeholder="Kemeja Linen Lengan Panjang" class="w-full h-10 px-3 bg-surface-studio border border-outline text-sm focus:bg-surface focus:border-outline-strong focus:ring-0">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Kategori Utama</label>
+              <select name="category" class="w-full h-10 px-2 bg-surface-studio border border-outline text-sm">
+                <option value="Pakaian Atas">Pakaian Atas</option>
+                <option value="Celana & Bawahan">Celana &amp; Bawahan</option>
+                <option value="Sepatu & Alas Kaki">Sepatu &amp; Alas Kaki</option>
+                <option value="Tas & Ransel">Tas &amp; Ransel</option>
+                <option value="Jam Tangan & Aksesoris">Jam Tangan &amp; Aksesoris</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Sub-Kategori</label>
+              <input type="text" name="sub_category" required placeholder="Kemeja / Tas" class="w-full h-10 px-3 bg-surface-studio border border-outline text-sm">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Koleksi</label>
+              <select name="gender" class="w-full h-10 px-2 bg-surface-studio border border-outline text-sm">
+                <option value="Pria">Pria</option>
+                <option value="Wanita">Wanita</option>
+                <option value="Unisex">Unisex</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Warna Dominan</label>
+              <input type="text" name="color" required placeholder="Biru Dongker" class="w-full h-10 px-3 bg-surface-studio border border-outline text-sm">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Harga (Rp)</label>
+              <input type="number" name="price" value="299000" required class="w-full h-10 px-3 bg-surface-studio border border-outline text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Stok</label>
+              <input type="number" name="stock" value="20" required class="w-full h-10 px-3 bg-surface-studio border border-outline text-sm">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Deskripsi</label>
+            <textarea name="description" rows="2" class="w-full p-3 bg-surface-studio border border-outline text-sm"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Foto Studio Produk (JPG/PNG)</label>
+            <input type="file" name="photo" accept="image/*" required class="w-full text-xs">
+          </div>
+          <button type="submit" id="adm-save-btn" class="w-full h-11 bg-primary text-on-primary text-xs font-semibold tracking-wide hover:bg-on-surface/90">
+            Simpan &amp; Indeks Foto Produk
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-8 space-y-8">
+        <div class="border border-outline p-6">
+          <h2 class="text-base font-semibold mb-4">Daftar Pesanan Pelanggan</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-outline bg-surface-studio text-on-surface-muted">
+                  <th class="p-3">Invoice</th>
+                  <th class="p-3">Pelanggan</th>
+                  <th class="p-3">Total</th>
+                  <th class="p-3">Pembayaran</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody id="adm-orders-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="border border-outline p-6">
+          <h2 class="text-base font-semibold mb-4">Katalog Produk Terbaru</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-outline bg-surface-studio text-on-surface-muted">
+                  <th class="p-3">Foto</th>
+                  <th class="p-3">Produk</th>
+                  <th class="p-3">Kategori</th>
+                  <th class="p-3">Harga</th>
+                  <th class="p-3">Stok</th>
+                  <th class="p-3">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adm-products-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bagian Benchmark Performa Mesin Pencari -->
+    <section id="evaluasi" class="border border-outline p-6 lg:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-outline">
+        <div>
+          <h2 class="text-lg font-semibold">Benchmark Kualitas Pencarian (Sentence Transformers Multimodal)</h2>
+          <p class="text-xs text-on-surface-muted mt-1">
+            Perbandingan metrik NDCG@10, MRR@10, dan Recall@10 antara Pencarian SQL Konvensional vs Base Multimodal vs Multimodal + Reranker.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <select id="adm-model-select" class="h-10 px-3 bg-surface-studio border border-outline text-xs">
+            {% for prof in model_profiles %}
+            <option value="{{ prof.id }}" {% if prof.id == hardware.active_profile.id %}selected{% endif %}>
+              {{ prof.label }}
+            </option>
+            {% endfor %}
+          </select>
+          <button type="button" onclick="adminSwitchModel()" id="adm-switch-btn" class="h-10 px-4 border border-outline-strong text-xs font-medium hover:bg-surface-studio">
+            Ganti Profil Model
+          </button>
+          <button type="button" onclick="adminRunBenchmark()" id="adm-eval-btn" class="h-10 px-5 bg-primary text-on-primary text-xs font-semibold hover:bg-on-surface/90">
+            Hitung Ulang NDCG@10
+          </button>
+        </div>
+      </div>
+
+      <div id="adm-benchmark-box" class="pt-6 text-sm text-on-surface-muted">
+        Memuat hasil evaluasi terbaru...
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function fmtRp(n) { return "Rp " + Number(n || 0).toLocaleString("id-ID"); }
+
+    async function loadAdminAll() {
+      const [ordRes, prodRes, resStat] = await Promise.all([
+        fetch("/api/orders"),
+        fetch("/api/products?limit=25"),
+        fetch("/api/research/status")
+      ]);
+      const ordData = await ordRes.json();
+      const prodData = await prodRes.json();
+      const statData = await resStat.json();
+
+      if (ordData.stats) {
+        document.getElementById("adm-total-prod").textContent = ordData.stats.total_products;
+        document.getElementById("adm-total-ord").textContent = ordData.stats.total_orders;
+        document.getElementById("adm-revenue").textContent = fmtRp(ordData.stats.total_revenue);
+        document.getElementById("adm-low-stock").textContent = ordData.stats.low_stock_count;
+      }
+
+      const orders = ordData.orders || [];
+      document.getElementById("adm-orders-body").innerHTML = orders.length
+        ? orders.map(o => `
+            <tr class="border-b border-outline">
+              <td class="p-3 font-mono font-medium">${o.invoice_number}<div class="text-[11px] text-on-surface-muted font-sans">${o.created_at}</div></td>
+              <td class="p-3">${o.customer_name}<div class="text-[11px] text-on-surface-muted">${o.customer_phone}</div></td>
+              <td class="p-3 font-semibold tabular-nums">${fmtRp(o.total_amount)}</td>
+              <td class="p-3">${o.payment_method}</td>
+              <td class="p-3">
+                <select onchange="adminUpdateOrder(${o.id}, this.value)" class="h-8 px-2 bg-surface-studio border border-outline text-xs">
+                  ${["Menunggu Konfirmasi", "Diproses", "Dikirim", "Selesai"].map(st => `<option value="${st}" ${o.status === st ? "selected" : ""}>${st}</option>`).join("")}
+                </select>
+              </td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="5" class="p-4 text-on-surface-muted">Belum ada transaksi pesanan masuk.</td></tr>`;
+
+      document.getElementById("adm-products-body").innerHTML = (prodData.products || []).slice(0, 15).map(p => `
+        <tr class="border-b border-outline">
+          <td class="p-2"><img src="/static/products/${p.image_filename}" class="w-10 h-12 object-contain bg-surface-studio"></td>
+          <td class="p-3 font-medium">${p.name}<div class="text-[11px] text-on-surface-muted">${p.sku} • ${p.color}</div></td>
+          <td class="p-3">${p.sub_category}</td>
+          <td class="p-3 tabular-nums">${fmtRp(p.price)}</td>
+          <td class="p-3 tabular-nums">${p.stock}</td>
+          <td class="p-3"><button onclick="adminDeleteProd(${p.id})" class="text-brand-red underline">Hapus</button></td>
+        </tr>
+      `).join("");
+
+      if (statData.latest_benchmark) {
+        renderAdminBenchmark(statData.latest_benchmark);
+      }
+    }
+
+    async function adminSubmitProduct(e) {
+      e.preventDefault();
+      const btn = document.getElementById("adm-save-btn");
+      btn.disabled = true;
+      btn.textContent = "Menyimpan & Mengindeks...";
+      try {
+        const res = await fetch("/api/admin/products", { method: "POST", body: new FormData(e.target) });
+        if (res.ok) {
+          e.target.reset();
+          await loadAdminAll();
+          alert("Produk baru berhasil disimpan dan diindeks ke GPU!");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Simpan & Indeks Foto Produk";
+      }
+    }
+
+    async function adminDeleteProd(id) {
+      await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      loadAdminAll();
+    }
+
+    async function adminUpdateOrder(id, status) {
+      await fetch(`/api/orders/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      });
+    }
+
+    async function adminRunBenchmark() {
+      const btn = document.getElementById("adm-eval-btn");
+      btn.disabled = true;
+      btn.textContent = "Menghitung di GPU...";
+      try {
+        const res = await fetch("/api/research/evaluate", { method: "POST" });
+        const rep = await res.json();
+        if (res.ok) renderAdminBenchmark(rep);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Hitung Ulang NDCG@10";
+      }
+    }
+
+    async function adminSwitchModel() {
+      const pid = document.getElementById("adm-model-select").value;
+      const btn = document.getElementById("adm-switch-btn");
+      btn.disabled = true;
+      btn.textContent = "Memuat Model...";
+      try {
+        const res = await fetch("/api/research/switch-model", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ profile_id: pid })
+        });
+        const data = await res.json();
+        alert(res.ok ? `Model aktif: ${data.active_profile.label}` : (data.detail || "Gagal mengganti model"));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ganti Profil Model";
+      }
+    }
+
+    function renderAdminBenchmark(rep) {
+      const s = rep.summary;
+      const nSql = s.sql_keyword["ndcg@10"];
+      const nBase = s.multimodal_base["ndcg@10"];
+      const nRerank = s.multimodal_reranked["ndcg@10"];
+
+      document.getElementById("adm-benchmark-box").innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-on-surface">
+          <div class="border border-outline p-5">
+            <div class="text-xs text-on-surface-muted">1. SQL Keyword Biasa (Baseline)</div>
+            <div class="text-3xl font-mono font-bold mt-2">${nSql.toFixed(4)}</div>
+            <div class="text-xs text-on-surface-muted mt-1">Recall@10: ${(s.sql_keyword["recall@10"] * 100).toFixed(1)}% • ${s.sql_keyword.avg_latency_ms} ms</div>
+          </div>
+          <div class="border border-outline p-5">
+            <div class="text-xs text-on-surface-muted">2. Stage-1 Base Multimodal Embedding</div>
+            <div class="text-3xl font-mono font-bold mt-2">${nBase.toFixed(4)}</div>
+            <div class="text-xs text-on-surface-muted mt-1">Recall@10: ${(s.multimodal_base["recall@10"] * 100).toFixed(1)}% • ${s.multimodal_base.avg_latency_ms} ms</div>
+          </div>
+          <div class="border-2 border-outline-strong p-5 bg-surface-studio">
+            <div class="text-xs font-semibold text-on-surface">3. Stage-2 Multimodal + Reranker</div>
+            <div class="text-3xl font-mono font-bold mt-2">${nRerank.toFixed(4)}</div>
+            <div class="text-xs text-on-surface-muted mt-1">Recall@10: ${(s.multimodal_reranked["recall@10"] * 100).toFixed(1)}% • ${s.multimodal_reranked.avg_latency_ms} ms</div>
+          </div>
+        </div>
+        <div class="overflow-x-auto text-on-surface">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-outline bg-surface-studio text-on-surface-muted">
+                <th class="p-3">Metode</th>
+                <th class="p-3">NDCG@10</th>
+                <th class="p-3">MRR@10</th>
+                <th class="p-3">Recall@10</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-outline">
+                <td class="p-3">SQL Keyword Biasa (LIKE)</td>
+                <td class="p-3 font-mono">${nSql.toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.sql_keyword["mrr@10"].toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.sql_keyword["recall@10"].toFixed(4)}</td>
+              </tr>
+              <tr class="border-b border-outline">
+                <td class="p-3">Stage-1 Base Multimodal Embedding</td>
+                <td class="p-3 font-mono">${nBase.toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.multimodal_base["mrr@10"].toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.multimodal_base["recall@10"].toFixed(4)}</td>
+              </tr>
+              <tr class="border-b border-outline font-semibold bg-surface-studio">
+                <td class="p-3">Stage-2 Multimodal Embedding + Reranker</td>
+                <td class="p-3 font-mono">${nRerank.toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.multimodal_reranked["mrr@10"].toFixed(4)}</td>
+                <td class="p-3 font-mono">${s.multimodal_reranked["recall@10"].toFixed(4)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAdminAll);
+  </script>
+</body>
+</html>

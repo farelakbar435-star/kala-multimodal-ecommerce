@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KALA — Toko Resmi Online Pakaian Minimalis</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#FFFFFF',
+            'on-surface': '#111111',
+            'surface-studio': '#F5F5F5',
+            'on-surface-muted': '#757575',
+            'primary': '#111111',
+            'on-primary': '#FFFFFF',
+            'brand-red': '#E0001A',
+            'on-brand-red': '#FFFFFF',
+            'outline': '#E5E5E5',
+            'outline-strong': '#111111',
+            'swatch-navy': '#1F2A3C',
+            'swatch-white': '#F8F8F6',
+            'swatch-olive': '#555D47',
+            'swatch-black': '#111111',
+            'swatch-sand': '#D8CFC2',
+            'swatch-charcoal': '#3F4347',
+            'swatch-indigo': '#2C3E55',
+            'swatch-ecru': '#EFECE6',
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '2px',
+            'DEFAULT': '2px',
+            'full': '9999px',
+          },
+          spacing: {
+            'gutter-xs': '4px',
+            'gutter-sm': '8px',
+            'gutter-md': '16px',
+            'gutter-lg': '24px',
+            'gutter-xl': '40px',
+            'section': '64px',
+            'page-margin': '48px',
+          },
+          fontFamily: {
+            'display': ['"Inter"', 'sans-serif'],
+            'headline': ['"Inter"', 'sans-serif'],
+            'title': ['"Inter"', 'sans-serif'],
+            'body': ['"Inter"', 'sans-serif'],
+            'label': ['"Inter"', 'sans-serif'],
+          },
+          fontSize: {
+            'display-lg': ['44px', { lineHeight: '50px', letterSpacing: '-1.0px', fontWeight: '600' }],
+            'display-lg-mobile': ['30px', { lineHeight: '36px', letterSpacing: '-0.5px', fontWeight: '600' }],
+            'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '-0.4px', fontWeight: '500' }],
+            'title-lg': ['16px', { lineHeight: '22px', letterSpacing: '-0.1px', fontWeight: '700' }],
+            'title-md': ['14px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '500' }],
+            'body-md': ['14px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.1px', fontWeight: '400' }],
+            'label-md': ['13px', { lineHeight: '18px', letterSpacing: '0.2px', fontWeight: '500' }],
+            'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.3px', fontWeight: '500' }],
+          },
+          transitionDuration: {
+            'state-change': '150ms',
+            'image-zoom': '300ms',
+          },
+          transitionTimingFunction: {
+            'state-change': 'ease-out',
+            'image-zoom': 'cubic-bezier(0.2, 0, 0, 1)',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.css">
+  <style>
+    .material-symbols-outlined {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .gsap-word-mask {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      padding-bottom: 0.14em;
+      margin-bottom: -0.14em;
+    }
+    .gsap-word-inner {
+      display: inline-block;
+      will-change: transform, opacity;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen flex flex-col">
+
+  <!-- Hidden Global File Input for Camera / Visual Search -->
+  <input type="file" id="camera-file-input" accept="image/*" class="hidden" onchange="handleCameraUpload(event)">
+
+  <!-- 1. Top Utility Announcement Bar -->
+  <div class="w-full bg-primary text-on-primary flex items-center justify-center px-gutter-md" style="height: 36px;">
+    <p class="font-body text-body-sm text-on-primary text-center tracking-wide">
+      Gratis Pengiriman untuk Pesanan di Atas Rp 699.000 | Pengembalian Mudah 30 Hari di Seluruh Toko
+    </p>
+  </div>
+
+  <!-- 2. Sticky Flagship Header -->
+  <header class="sticky top-0 z-40 w-full bg-surface border-b border-outline">
+    <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-4 flex items-center justify-between gap-gutter-lg">
+      <!-- Left: Brand Square + Main Navigation -->
+      <div class="flex items-center gap-gutter-xl">
+        <a href="#" onclick="goHome(event)" aria-label="Beranda KALA" class="flex-shrink-0 w-10 h-10 bg-brand-red text-on-brand-red flex items-center justify-center rounded-none">
+          <span class="font-headline text-label-sm font-bold tracking-tight leading-none">KALA</span>
+        </a>
+
+        <nav aria-label="Navigasi Utama" class="hidden lg:flex items-center gap-gutter-lg">
+          <button type="button" onclick="filterByTopNav('Wanita')" data-topnav="Wanita" class="top-nav-link font-label text-label-md text-on-surface hover:text-on-surface-muted transition-colors duration-state-change whitespace-nowrap">Wanita</button>
+          <button type="button" onclick="filterByTopNav('Pria')" data-topnav="Pria" class="top-nav-link font-label text-label-md text-on-surface hover:text-on-surface-muted transition-colors duration-state-change whitespace-nowrap">Pria</button>
+          <button type="button" onclick="filterByTopNav('Unisex')" data-topnav="Unisex" class="top-nav-link font-label text-label-md text-on-surface hover:text-on-surface-muted transition-colors duration-state-change whitespace-nowrap">Unisex</button>
+          <button type="button" onclick="filterByTopNav('Semua')" data-topnav="Semua" class="top-nav-link font-label text-label-md text-on-surface hover:text-on-surface-muted transition-colors duration-state-change whitespace-nowrap">Koleksi Baru</button>
+          <button type="button" onclick="filterByTopNav('Promo')" data-topnav="Promo" class="top-nav-link font-label text-label-md text-brand-red hover:opacity-80 transition-opacity duration-state-change whitespace-nowrap">Penawaran Terbatas</button>
+        </nav>
+      </div>
+
+      <!-- Right: Rectangular Search Bar with Camera Icon + Utility Icons -->
+      <div class="flex items-center gap-gutter-md flex-1 justify-end max-w-2xl">
+        <form onsubmit="submitHeaderSearch(event)" class="relative flex items-center w-full max-w-md">
+          <span class="material-symbols-outlined text-on-surface-muted absolute left-3 pointer-events-none" style="font-size: 18px;" aria-hidden="true">search</span>
+          <input
+            type="search"
+            id="header-search-input"
+            aria-label="Cari produk"
+            placeholder="Cari produk atau klik ikon kamera untuk cari pakai foto..."
+            class="w-full h-10 pl-9 pr-10 bg-surface-studio border border-outline rounded-sm font-body text-body-sm text-on-surface placeholder:text-on-surface-muted focus:bg-surface focus:border-outline-strong focus:ring-0"
+          >
+          <button
+            type="button"
+            onclick="triggerCameraUpload()"
+            aria-label="Cari pakai foto"
+            title="Cari produk pakai foto"
+            class="absolute right-2 w-7 h-7 flex items-center justify-center text-on-surface-muted hover:text-on-surface transition-colors duration-state-change"
+          >
+            <span id="header-camera-icon" class="material-symbols-outlined" style="font-size: 18px;">photo_camera</span>
+          </button>
+        </form>
+
+        <div class="flex items-center gap-gutter-xs">
+          <a href="/admin" title="Akun & Manajemen Toko" aria-label="Manajemen Toko" class="inline-flex items-center justify-center w-10 h-10 rounded-sm text-on-surface hover:bg-surface-studio transition-colors duration-state-change">
+            <span class="material-symbols-outlined" style="font-size: 22px;">person</span>
+          </a>
+          <button type="button" onclick="filterByTopNav('Wishlist')" title="Wishlist Saya" aria-label="Wishlist" class="relative inline-flex items-center justify-center w-10 h-10 rounded-sm text-on-surface hover:bg-surface-studio transition-colors duration-state-change">
+            <span class="material-symbols-outlined" style="font-size: 22px;">favorite</span>
+            <span id="wishlist-badge" class="hidden absolute top-1.5 right-1 min-w-4 h-4 px-1 bg-brand-red text-on-brand-red rounded-full items-center justify-center font-label font-semibold leading-none tabular-nums" style="font-size: 10px;">0</span>
+          </button>
+          <button type="button" onclick="toggleBagDrawer(true)" title="Keranjang Belanja" aria-label="Keranjang Belanja" class="relative inline-flex items-center justify-center w-10 h-10 rounded-sm text-on-surface hover:bg-surface-studio transition-colors duration-state-change">
+            <span class="material-symbols-outlined" style="font-size: 22px;">shopping_bag</span>
+            <span id="bag-count-badge" class="absolute top-1.5 right-1 min-w-4 h-4 px-1 bg-primary text-on-primary rounded-full flex items-center justify-center font-label font-semibold leading-none tabular-nums" style="font-size: 10px;">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- ==================== VIEW 1: FLAGSHIP STOREFRONT ==================== -->
+    <div id="screen-storefront">
+      <!-- Editorial Hero Banner -->
+      <section id="hero-banner-section" class="relative w-full overflow-hidden bg-surface-studio border-b border-outline" style="height: 540px;">
+        <img id="hero-banner-img" src="/static/stitch_assets/hero_banner_v2.jpg" alt="Koleksi Pakaian Esensial KALA" class="w-full h-full object-cover object-top will-change-transform">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/70 via-primary/35 to-transparent"></div>
+
+        <div class="absolute inset-0 max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin flex items-center">
+          <div class="max-w-xl flex flex-col items-start gap-gutter-md">
+            <span id="hero-eyebrow" class="font-label text-label-sm text-on-primary uppercase tracking-widest border-b border-on-primary/50 pb-1">
+              Koleksi Musim Ini
+            </span>
+            <h1 id="hero-headline" class="font-headline text-display-lg-mobile lg:text-display-lg text-on-primary text-balance">
+              Kenyamanan Linen Esensial untuk Aktivitas Harian
+            </h1>
+            <p id="hero-subprice" class="font-title text-title-lg text-on-primary/95 tabular-nums">
+              Mulai Rp 199.000
+            </p>
+            <div id="hero-ctas" class="pt-gutter-xs flex flex-wrap gap-gutter-sm">
+              <a href="#koleksi" class="inline-flex items-center justify-center bg-surface text-on-surface px-gutter-lg py-3.5 rounded-sm font-label text-label-md transition-colors duration-state-change hover:bg-surface-studio">
+                Lihat Koleksi
+              </a>
+              <button type="button" onclick="triggerCameraUpload()" class="inline-flex items-center gap-2 bg-primary/80 text-on-primary border border-on-primary/40 px-gutter-lg py-3.5 rounded-sm font-label text-label-md transition-colors duration-state-change hover:bg-primary">
+                <span class="material-symbols-outlined" style="font-size: 18px;">photo_camera</span>
+                <span>Cari Pakai Foto</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Category Strip -->
+      <section id="koleksi" class="w-full bg-surface border-b border-outline">
+        <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-gutter-lg">
+          <div role="tablist" aria-label="Kategori Produk" class="flex items-center gap-gutter-sm overflow-x-auto no-scrollbar pb-1">
+            <button type="button" onclick="selectQuickTab('semua')" data-qtab="semua" class="category-tab px-4 py-2.5 bg-primary text-on-primary border border-primary rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change">
+              Semua Koleksi
+            </button>
+            <button type="button" onclick="selectQuickTab('kemeja')" data-qtab="kemeja" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              Kemeja &amp; Blus
+            </button>
+            <button type="button" onclick="selectQuickTab('kaos')" data-qtab="kaos" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              T-Shirt &amp; Polo
+            </button>
+            <button type="button" onclick="selectQuickTab('celana')" data-qtab="celana" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              Celana &amp; Jeans
+            </button>
+            <button type="button" onclick="selectQuickTab('jaket')" data-qtab="jaket" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              Jaket &amp; Outerwear
+            </button>
+            <button type="button" onclick="selectQuickTab('sepatu')" data-qtab="sepatu" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              Sepatu &amp; Sandal
+            </button>
+            <button type="button" onclick="selectQuickTab('tas')" data-qtab="tas" class="category-tab px-4 py-2.5 bg-surface text-on-surface border border-outline rounded-sm font-label text-label-md whitespace-nowrap transition-colors duration-state-change hover:border-outline-strong">
+              Tas &amp; Jam Tangan
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flagship 4-Column Product Grid -->
+      <section class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-section">
+        <div class="flex flex-wrap items-baseline justify-between gap-4 mb-gutter-xl pb-gutter-md border-b border-outline">
+          <h2 id="storefront-heading" class="font-headline text-headline-md text-on-surface">
+            Koleksi Pilihan Minggu Ini
+          </h2>
+          <span id="storefront-count" class="font-body text-body-sm text-on-surface-muted tabular-nums">
+            Memuat produk...
+          </span>
+        </div>
+
+        <div id="storefront-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter-lg gap-y-gutter-xl items-stretch"></div>
+      </section>
+
+      <!-- Editorial Philosophy Section (ScrollTrigger Word-by-Word Reveal) -->
+      <section class="w-full bg-surface-studio border-t border-outline">
+        <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-section">
+          <div class="max-w-3xl">
+            <span class="font-label text-label-sm text-on-surface-muted uppercase tracking-widest block mb-gutter-md">
+              Filosofi Desain KALA
+            </span>
+            <h2 data-scroll-words class="font-headline text-display-lg-mobile lg:text-display-lg text-on-surface text-balance">
+              Dirancang dengan presisi potongan esensial yang bertahan melampaui musim
+            </h2>
+            <p class="font-body text-body-md text-on-surface-muted mt-gutter-md max-w-xl">
+              Setiap pakaian dibuat dari serat alami pilihan dengan siluet arsitektural bersih—memadukan kenyamanan fungsional dan pencarian gaya visual yang intuitif.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================== VIEW 2: PENCARIAN VISUAL & GAYA ==================== -->
+    <div id="screen-visual-search" class="hidden">
+      <section aria-label="Filter dan Referensi Pencarian Visual" class="w-full bg-surface-studio border-b border-outline">
+        <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-gutter-lg flex flex-col xl:flex-row xl:items-center justify-between gap-gutter-lg">
+          <!-- Left: Reference Photo (72x96px) + Refinement Form -->
+          <div class="flex items-center gap-gutter-md flex-1">
+            <div id="vs-photo-box" class="hidden flex-col items-center gap-1.5 flex-shrink-0">
+              <div class="overflow-hidden border border-outline bg-surface rounded-none" style="width: 72px; height: 96px;">
+                <img id="vs-reference-img" src="" alt="Foto referensi pencarian" class="w-full h-full object-contain">
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="triggerCameraUpload()" class="font-label text-label-sm text-on-surface underline underline-offset-4 hover:text-on-surface-muted">
+                  Ganti Foto
+                </button>
+                <button type="button" onclick="removeReferencePhoto()" class="font-label text-label-sm text-on-surface-muted hover:text-brand-red" title="Hapus foto">
+                  &times;
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-gutter-sm flex-1 max-w-xl">
+              <div class="flex items-center justify-between">
+                <span class="font-label text-label-sm text-on-surface">
+                  Pencarian Visual &amp; Gaya
+                </span>
+                <button type="button" onclick="triggerCameraUpload()" id="vs-attach-btn" class="inline-flex items-center gap-1 font-label text-label-sm text-on-surface underline underline-offset-4 hover:text-on-surface-muted">
+                  <span class="material-symbols-outlined" style="font-size: 15px;">photo_camera</span>
+                  <span>Lampirkan Foto Referensi</span>
+                </button>
+              </div>
+              <form onsubmit="submitRefinementSearch(event)" class="flex items-center gap-gutter-sm w-full">
+                <input
+                  type="text"
+                  id="vs-refinement-input"
+                  aria-label="Tambahkan detail pencarian"
+                  placeholder="Tambahkan detail, misal: warna hitam, biru dongker, atau motif kotak..."
+                  class="flex-1 h-10 px-3 bg-surface border border-outline rounded-sm font-body text-body-sm text-on-surface placeholder:text-on-surface-muted focus:border-outline-strong focus:ring-0"
+                >
+                <button type="submit" id="vs-apply-btn" class="inline-flex items-center justify-center h-10 bg-primary text-on-primary px-gutter-lg rounded-sm font-label text-label-md transition-colors duration-state-change hover:bg-on-surface/90 whitespace-nowrap">
+                  Terapkan
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: Retail Filter Dropdowns -->
+          <div class="flex flex-wrap items-center gap-gutter-sm">
+            <select id="vs-sort-select" onchange="applyVisualClientFilters()" aria-label="Urutkan produk" class="h-10 pl-3 pr-8 bg-surface border border-outline rounded-sm font-label text-label-md text-on-surface focus:border-outline-strong focus:ring-0 cursor-pointer">
+              <option value="sesuai">Urutkan: Paling Sesuai</option>
+              <option value="harga-rendah">Harga: Terendah ke Tertinggi</option>
+              <option value="harga-tinggi">Harga: Tertinggi ke Terendah</option>
+            </select>
+
+            <select id="vs-gender-select" onchange="applyVisualClientFilters()" aria-label="Filter koleksi" class="h-10 pl-3 pr-8 bg-surface border border-outline rounded-sm font-label text-label-md text-on-surface focus:border-outline-strong focus:ring-0 cursor-pointer">
+              <option value="">Semua Koleksi</option>
+              <option value="Pria">Pria</option>
+              <option value="Wanita">Wanita</option>
+              <option value="Unisex">Unisex</option>
+            </select>
+
+            <select id="vs-color-select" onchange="applyVisualClientFilters()" aria-label="Filter warna" class="h-10 pl-3 pr-8 bg-surface border border-outline rounded-sm font-label text-label-md text-on-surface focus:border-outline-strong focus:ring-0 cursor-pointer">
+              <option value="">Semua Warna</option>
+              <option value="Hitam">Hitam</option>
+              <option value="Putih">Putih</option>
+              <option value="Biru">Biru &amp; Navy</option>
+              <option value="Abu">Abu-abu</option>
+              <option value="Merah">Merah &amp; Marun</option>
+              <option value="Coklat">Coklat &amp; Krem</option>
+              <option value="Hijau">Hijau &amp; Zaitun</option>
+            </select>
+
+            <select id="vs-price-select" onchange="applyVisualClientFilters()" aria-label="Filter rentang harga" class="h-10 pl-3 pr-8 bg-surface border border-outline rounded-sm font-label text-label-md text-on-surface focus:border-outline-strong focus:ring-0 cursor-pointer">
+              <option value="">Rentang Harga</option>
+              <option value="under-250">Di bawah Rp 250.000</option>
+              <option value="250-450">Rp 250.000 – Rp 450.000</option>
+              <option value="above-450">Di atas Rp 450.000</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-section">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-gutter-xl pb-gutter-md border-b border-outline">
+          <h1 id="vs-results-heading" class="font-headline text-headline-md text-on-surface">
+            Menampilkan produk dengan potongan dan gaya serupa
+          </h1>
+          <button type="button" onclick="goHome(event)" class="font-label text-label-md text-on-surface underline underline-offset-4 hover:text-on-surface-muted">
+            Kembali ke Semua Koleksi
+          </button>
+        </div>
+
+        <div id="vs-results-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter-lg gap-y-gutter-xl items-stretch"></div>
+      </section>
+    </div>
+
+    <!-- ==================== VIEW 3: DETAIL PRODUK (PDP) ==================== -->
+    <div id="screen-pdp" class="hidden">
+      <nav aria-label="Breadcrumb" class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin pt-gutter-lg pb-gutter-md">
+        <ol class="flex flex-wrap items-center gap-gutter-sm font-body text-body-sm text-on-surface-muted">
+          <li><a href="#" onclick="goHome(event)" class="hover:text-on-surface">Beranda</a></li>
+          <li aria-hidden="true">/</li>
+          <li><button type="button" id="pdp-bc-gender" onclick="goHome(event)" class="hover:text-on-surface">Pria</button></li>
+          <li aria-hidden="true">/</li>
+          <li><span id="pdp-bc-subcat">Kemeja</span></li>
+          <li aria-hidden="true">/</li>
+          <li id="pdp-bc-title" aria-current="page" class="text-on-surface">Detail Produk</li>
+        </ol>
+      </nav>
+
+      <section class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin pb-section">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-xl items-start">
+          <!-- Left 60% (7 cols): 2x2 Editorial Studio Photo Grid -->
+          <div id="pdp-gallery" class="lg:col-span-7 grid grid-cols-2 gap-gutter-md"></div>
+
+          <!-- Right 40% (5 cols): Sticky Buy Box -->
+          <div class="lg:col-span-5 lg:sticky lg:top-24 flex flex-col gap-gutter-lg">
+            <div class="flex flex-col gap-gutter-sm border-b border-outline pb-gutter-lg">
+              <p id="pdp-sku-line" class="font-body text-body-sm text-on-surface-muted tabular-nums">
+                Pria • Kode Produk KLA-1001
+              </p>
+              <h1 id="pdp-title" class="font-headline text-headline-md text-on-surface font-bold">
+                Kemeja Oxford Reguler
+              </h1>
+              <div class="flex items-center justify-between pt-1">
+                <div id="pdp-price-block" class="flex items-baseline gap-gutter-sm">
+                  <p class="font-headline text-headline-md text-on-surface font-bold tabular-nums">Rp 399.000</p>
+                </div>
+                <div class="flex items-center gap-1.5 font-body text-body-sm text-on-surface">
+                  <span class="material-symbols-outlined" style="font-size: 16px; font-variation-settings: 'FILL' 1;">star</span>
+                  <span id="pdp-rating" class="tabular-nums">4.9 (142 ulasan)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Picker -->
+            <div class="flex flex-col gap-gutter-sm">
+              <span class="font-label text-label-md text-on-surface">
+                Warna: <span id="pdp-color-label" class="font-semibold">Biru Dongker</span>
+              </span>
+              <div id="pdp-color-swatches" class="flex items-center gap-gutter-sm"></div>
+            </div>
+
+            <!-- Size Picker (Sharp 48x48px square boxes) -->
+            <div class="flex flex-col gap-gutter-sm">
+              <div class="flex items-center justify-between">
+                <span class="font-label text-label-md text-on-surface">
+                  Ukuran: <span id="pdp-size-label" class="font-semibold">L</span>
+                </span>
+                <a href="#panduan-ukuran-acc" class="font-body text-body-sm text-on-surface underline underline-offset-4 hover:text-on-surface-muted">
+                  Panduan Ukuran
+                </a>
+              </div>
+              <div id="pdp-size-boxes" class="flex flex-wrap items-center gap-gutter-sm"></div>
+            </div>
+
+            <!-- Quantity + Add to Bag CTA -->
+            <div class="flex items-center gap-gutter-sm pt-gutter-xs">
+              <div class="flex items-center border border-outline bg-surface rounded-sm" style="height: 52px;">
+                <button type="button" onclick="adjustPdpQty(-1)" aria-label="Kurangi jumlah" class="w-11 h-full flex items-center justify-center text-on-surface hover:bg-surface-studio">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">remove</span>
+                </button>
+                <span id="pdp-qty-val" class="w-10 text-center font-label text-label-md text-on-surface tabular-nums">1</span>
+                <button type="button" onclick="adjustPdpQty(1)" aria-label="Tambah jumlah" class="w-11 h-full flex items-center justify-center text-on-surface hover:bg-surface-studio">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                </button>
+              </div>
+
+              <button type="button" id="pdp-add-bag-btn" onclick="addCurrentPdpToBag()" class="flex-1 inline-flex items-center justify-center bg-primary text-on-primary px-gutter-lg rounded-sm font-label text-label-md transition-colors duration-state-change hover:bg-on-surface/90" style="height: 52px;">
+                Tambah ke Keranjang
+              </button>
+            </div>
+
+            <button type="button" id="pdp-visual-similar-btn" class="w-full inline-flex items-center justify-center gap-2 border border-outline-strong bg-surface text-on-surface py-3 rounded-sm font-label text-label-md hover:bg-surface-studio transition-colors duration-state-change">
+              <span class="material-symbols-outlined" style="font-size: 18px;">photo_camera</span>
+              <span>Cari Produk Serupa dengan Foto Ini</span>
+            </button>
+
+            <!-- Accordions -->
+            <div class="border-t border-outline mt-gutter-xs">
+              <div class="border-b border-outline">
+                <button type="button" onclick="toggleAccordion(this)" aria-expanded="true" class="w-full py-gutter-md flex items-center justify-between text-left">
+                  <span class="font-label text-label-md text-on-surface">Deskripsi Bahan &amp; Perawatan</span>
+                  <span class="material-symbols-outlined text-on-surface acc-icon" style="font-size: 20px;">expand_less</span>
+                </button>
+                <div class="acc-panel pb-gutter-md">
+                  <p id="pdp-description" class="font-body text-body-md text-on-surface-muted"></p>
+                </div>
+              </div>
+
+              <div id="panduan-ukuran-acc" class="border-b border-outline">
+                <button type="button" onclick="toggleAccordion(this)" aria-expanded="false" class="w-full py-gutter-md flex items-center justify-between text-left">
+                  <span class="font-label text-label-md text-on-surface">Detail Ukuran</span>
+                  <span class="material-symbols-outlined text-on-surface acc-icon" style="font-size: 20px;">expand_more</span>
+                </button>
+                <div class="acc-panel pb-gutter-md hidden">
+                  <p class="font-body text-body-md text-on-surface-muted tabular-nums">
+                    Potongan reguler ergonomis standar Asia. Ukuran M: Lebar Bahu 45 cm • Lingkar Dada 108 cm • Panjang 73 cm. Ukuran L: Lebar Bahu 47 cm • Lingkar Dada 114 cm • Panjang 76 cm.
+                  </p>
+                </div>
+              </div>
+
+              <div class="border-b border-outline">
+                <button type="button" onclick="toggleAccordion(this)" aria-expanded="false" class="w-full py-gutter-md flex items-center justify-between text-left">
+                  <span class="font-label text-label-md text-on-surface">Cek Ketersediaan Stok</span>
+                  <span class="material-symbols-outlined text-on-surface acc-icon" style="font-size: 20px;">expand_more</span>
+                </button>
+                <div class="acc-panel pb-gutter-md hidden">
+                  <p id="pdp-stock-info" class="font-body text-body-md text-on-surface-muted"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Related Visual Matches -->
+      <section class="w-full bg-surface border-t border-outline">
+        <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-section">
+          <div class="flex items-center justify-between mb-gutter-xl">
+            <h2 id="pdp-related-heading" class="font-headline text-headline-md text-on-surface">
+              Gaya Serupa Pilihan untuk Anda
+            </h2>
+            <button type="button" id="pdp-see-all-similar" class="font-label text-label-md text-on-surface underline underline-offset-4 hover:text-on-surface-muted">
+              Lihat Semua
+            </button>
+          </div>
+          <div id="pdp-related-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter-lg gap-y-gutter-xl items-stretch"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 6. Minimalist Retail Footer -->
+  <footer class="w-full bg-surface border-t border-outline">
+    <div class="max-w-screen-2xl mx-auto px-gutter-lg lg:px-page-margin py-section">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter-xl">
+        <div class="flex flex-col gap-gutter-sm">
+          <h3 class="font-label text-label-md text-on-surface mb-1">Tentang KALA</h3>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Profil Perusahaan</a>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Lokasi Toko Flagship</a>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Komitmen Bahan Alami</a>
+        </div>
+        <div class="flex flex-col gap-gutter-sm">
+          <h3 class="font-label text-label-md text-on-surface mb-1">Bantuan &amp; Panduan Ukuran</h3>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Panduan Ukuran Lengkap</a>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Informasi Pengiriman</a>
+          <a href="#" onclick="goHome(event)" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Kebijakan Pengembalian 30 Hari</a>
+        </div>
+        <div class="flex flex-col gap-gutter-sm">
+          <h3 class="font-label text-label-md text-on-surface mb-1">Layanan Pelanggan</h3>
+          <a href="#" onclick="toggleBagDrawer(true); return false;" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Keranjang &amp; Checkout</a>
+          <a href="/admin" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Manajemen Toko &amp; Pesanan</a>
+          <a href="/admin#evaluasi" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Evaluasi Pencarian Multimodal</a>
+        </div>
+        <div class="flex flex-col gap-gutter-sm">
+          <h3 class="font-label text-label-md text-on-surface mb-1">Ikuti Kami</h3>
+          <span class="font-body text-body-sm text-on-surface-muted">Instagram</span>
+          <span class="font-body text-body-sm text-on-surface-muted">TikTok</span>
+          <span class="font-body text-body-sm text-on-surface-muted">YouTube</span>
+        </div>
+      </div>
+
+      <div class="mt-gutter-xl pt-gutter-lg border-t border-outline flex flex-col sm:flex-row items-start sm:items-center justify-between gap-gutter-md">
+        <div class="flex items-center gap-gutter-md">
+          <span class="w-6 h-6 bg-brand-red text-on-brand-red flex items-center justify-center font-headline font-bold leading-none" style="font-size: 9px;">KALA</span>
+          <p class="font-body text-body-sm text-on-surface-muted">
+            © 2026 KALA Indonesia. Seluruh hak cipta dilindungi.
+          </p>
+        </div>
+        <div class="flex items-center gap-gutter-lg">
+          <a href="/admin" class="font-body text-body-sm text-on-surface-muted hover:text-on-surface">Portal Admin</a>
+          <span class="font-body text-body-sm text-on-surface-muted">Kebijakan Privasi</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Slide-Over Keranjang Belanja (Architectural Sharp Style) -->
+  <div id="bag-backdrop" onclick="toggleBagDrawer(false)" class="fixed inset-0 bg-primary/40 z-50 hidden"></div>
+  <aside id="bag-drawer" data-lenis-prevent class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-surface border-l border-outline z-50 hidden flex-col">
+    <div class="px-gutter-lg py-5 border-b border-outline flex items-center justify-between">
+      <h2 class="font-headline text-title-lg text-on-surface">Keranjang Belanja</h2>
+      <button type="button" onclick="toggleBagDrawer(false)" aria-label="Tutup keranjang" class="w-8 h-8 flex items-center justify-center text-on-surface hover:bg-surface-studio">
+        <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-gutter-lg py-gutter-md">
+      <div id="bag-items-container"></div>
+
+      <form id="bag-checkout-form" onsubmit="submitBagOrder(event)" class="hidden mt-gutter-lg pt-gutter-lg border-t border-outline flex-col gap-gutter-md">
+        <div class="flex items-center justify-between pb-2 border-b border-outline">
+          <span class="font-label text-label-md text-on-surface">Subtotal Pesanan</span>
+          <span id="bag-subtotal-text" class="font-headline text-title-lg text-on-surface tabular-nums">Rp 0</span>
+        </div>
+
+        <div>
+          <label class="block font-label text-label-sm text-on-surface mb-1">Nama Lengkap Penerima</label>
+          <input type="text" name="customer_name" required placeholder="Masukkan nama lengkap" class="w-full h-10 px-3 bg-surface-studio border border-outline rounded-sm font-body text-body-sm focus:bg-surface focus:border-outline-strong focus:ring-0">
+        </div>
+        <div>
+          <label class="block font-label text-label-sm text-on-surface mb-1">Nomor Telepon / WhatsApp</label>
+          <input type="text" name="customer_phone" required placeholder="0812xxxxxxxx" class="w-full h-10 px-3 bg-surface-studio border border-outline rounded-sm font-body text-body-sm focus:bg-surface focus:border-outline-strong focus:ring-0">
+        </div>
+        <div>
+          <label class="block font-label text-label-sm text-on-surface mb-1">Alamat Lengkap Pengiriman</label>
+          <textarea name="shipping_address" rows="2" required placeholder="Nama jalan, nomor rumah, kecamatan, kota..." class="w-full p-3 bg-surface-studio border border-outline rounded-sm font-body text-body-sm focus:bg-surface focus:border-outline-strong focus:ring-0"></textarea>
+        </div>
+        <div>
+          <label class="block font-label text-label-sm text-on-surface mb-1">Metode Pembayaran</label>
+          <select name="payment_method" class="w-full h-10 px-3 bg-surface-studio border border-outline rounded-sm font-body text-body-sm focus:bg-surface focus:border-outline-strong focus:ring-0">
+            <option value="QRIS">QRIS</option>
+            <option value="Virtual Account">Transfer Virtual Account</option>
+            <option value="Bayar di Tempat (COD)">Bayar di Tempat (COD)</option>
+          </select>
+        </div>
+
+        <button type="submit" id="bag-checkout-btn" class="w-full h-12 bg-primary text-on-primary font-label text-label-md rounded-sm hover:bg-on-surface/90 transition-colors duration-state-change mt-1">
+          Lanjutkan Pemesanan
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Minimalist Toast Notification -->
+  <div id="kala-toast" class="fixed bottom-6 right-6 z-50 hidden bg-primary text-on-primary px-5 py-3.5 rounded-sm font-body text-body-sm tracking-wide border border-outline-strong"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js"></script>
+  <script src="/static/app.js?v=6"></script>
+</body>
+</html>

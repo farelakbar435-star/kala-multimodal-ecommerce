@@ -1,0 +1,77 @@
+﻿{
+    "num_queries":  80,
+    "corpus_size":  240,
+    "k":  10,
+    "active_model":  "CLIP ViT-B/32 Multimodal (Base Model)",
+    "device":  "NVIDIA GeForce RTX 3050 6GB Laptop GPU (CUDA)",
+    "summary":  {
+                    "sql_keyword":  {
+                                        "ndcg@10":  0.2888,
+                                        "mrr@10":  0.3688,
+                                        "recall@10":  0.2675,
+                                        "avg_latency_ms":  2.9
+                                    },
+                    "multimodal_base":  {
+                                            "ndcg@10":  0.7271,
+                                            "mrr@10":  0.673,
+                                            "recall@10":  0.9406,
+                                            "avg_latency_ms":  486.5
+                                        },
+                    "multimodal_reranked":  {
+                                                "ndcg@10":  0.9309,
+                                                "mrr@10":  0.9146,
+                                                "recall@10":  1.0,
+                                                "avg_latency_ms":  46.2
+                                            }
+                },
+    "sample_wins":  [
+                        {
+                            "query":  "ikat pinggang wanita warna abu-abu",
+                            "target_name":  "Ikat Pinggang Wanita Edisi Urban #233",
+                            "target_image":  "hd_prod_0133.jpg",
+                            "sql_ndcg":  0.0,
+                            "base_ndcg":  0.387,
+                            "rerank_ndcg":  1.0
+                        },
+                        {
+                            "query":  "dompet pesta wanita warna merah",
+                            "target_name":  "Dompet Pesta Wanita Merah Seri Nusantara",
+                            "target_image":  "hd_prod_0177.jpg",
+                            "sql_ndcg":  0.613,
+                            "base_ndcg":  0.92,
+                            "rerank_ndcg":  1.0
+                        },
+                        {
+                            "query":  "sepatu kasual pria warna hitam",
+                            "target_name":  "Sepatu Kasual Pria Hitam Seri Harmoni",
+                            "target_image":  "hd_prod_0048.jpg",
+                            "sql_ndcg":  0.469,
+                            "base_ndcg":  0.349,
+                            "rerank_ndcg":  0.845
+                        },
+                        {
+                            "query":  "celana panjang pria warna hitam formal",
+                            "target_name":  "Celana Panjang Pria Edisi Urban #332",
+                            "target_image":  "hd_prod_0232.jpg",
+                            "sql_ndcg":  0.613,
+                            "base_ndcg":  0.441,
+                            "rerank_ndcg":  0.92
+                        },
+                        {
+                            "query":  "kemeja pria warna hitam",
+                            "target_name":  "Kemeja Pria Edisi Urban #236",
+                            "target_image":  "hd_prod_0136.jpg",
+                            "sql_ndcg":  0.0,
+                            "base_ndcg":  1.0,
+                            "rerank_ndcg":  1.0
+                        },
+                        {
+                            "query":  "sepatu kasual pria warna biru motif kotak-kotak",
+                            "target_name":  "Sepatu Kasual Pria Biru Seri Nusantara",
+                            "target_image":  "hd_prod_0078.jpg",
+                            "sql_ndcg":  0.0,
+                            "base_ndcg":  0.333,
+                            "rerank_ndcg":  1.0
+                        }
+                    ]
+}

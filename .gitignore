@@ -1,0 +1,11 @@
+.venv/
+.cache/
+.env
+GEMINI.md
+stitch_export/
+__pycache__/
+*.pyc
+data/indices/
+models/
+app/static/uploads/*
+!app/static/uploads/.gitkeep
